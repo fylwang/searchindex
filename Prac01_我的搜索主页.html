@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>王鹏专用搜索引擎</title>
+</head>
+<style>
+    html,body{
+        width:100%;
+        height: 100%;
+    }
+    #package{
+        width: 100%;
+        height: 100%;
+        background: url(img/02.jpg);
+    }
+    #package #content{
+        width:80%;
+        height: 100%;
+        margin:0 auto;
+        text-align: center;
+    }
+    #package #content #content-box{
+        width: 100%;
+        height:100%;
+    }
+    #package #content #content-box .log{
+        width: 100%;
+        height: 30%;
+        padding-top: 100px;
+        box-sizing: border-box;
+        text-align: center;
+        font-size: 40px;
+        color:rgba(48, 20, 41, 0.92);
+        font-family: "Eras Light ITC";
+        text-shadow: 3px 3px 10px #fff;
+    }
+    #package #content #content-box .container{
+        margin: 0 auto;
+    }
+    #package #content #content-box .main .textContent{
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 2px solid pink;
+
+    }
+    #package #content #content-box .main .pink{
+        background-color: deeppink;
+        color: #ffffff;
+        font-weight: bolder;
+        font-size: 32px;
+        opacity: .9;
+        border-radius: 5px;
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.2.1/vue.js"></script>
+<script src="https://cdn.bootcss.com/vue-resource/1.2.1/vue-resource.common.js"></script>
+<script>
+    window.onload=function () {
+        var Hs=new Vue({
+            el:'#package',
+            data:{
+                arr: [],
+                ipt:'',
+                num:-1,
+                style:'pink'
+            },
+            methods:{
+                get(){
+                    this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd='+this.ipt +'',{
+                        jsonp:'cb'
+                    }
+                    ).then(function (res) {
+                        console.log(res.data.s);
+                        this.arr=res.data.s
+                    })
+                },
+                down(){
+                    this.num++;
+                    console.log(this.num);
+                    if(this.num>this.arr.length){
+                        this.num=-1;
+                    };
+                    this.ipt=this.arr[this.num]
+
+
+                },
+                up(){
+                    this.num--;
+                    if(this.num<0){
+                        this.num=this.arr.length+1;
+                    };
+                    this.ipt=this.arr[this.num]
+
+                },
+                sent(){
+                    window.open('https://www.baidu.com/s?wd='+this.ipt);
+                    this.ipt='';
+                },
+                keydown(ev){
+                    if(ev.keyCode==13){
+                        window.open('https://www.baidu.com/s?wd='+this.ipt);
+                        this.ipt='';
+                    }
+                },
+                mouseenter(k){
+                    this.num=k;
+                    this.ipt=this.arr[k];
+                },
+                mouseleave(k){
+                    this.num=-1;
+                    this.ipt=this.arr[k];
+                },
+                chiose(){
+                    window.open('https://www.baidu.com/s?wd='+this.ipt);
+                    this.ipt='';
+                },
+                del(ev,k){
+                    this.arr.slice(k,1);
+                    ev.stopPropagation()
+                }
+            }
+
+        })
+    }
+</script>
+<body>
+    <div id="package">
+        <div id="content">
+            <div id="content-box">
+                <div class="log"><h1>王鹏专用搜索引擎</h1></div>
+                <div class="main">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6  col-md-offset-3 form-group">
+                                <input type="text" class="form-control input-lg" v-model='ipt' @input="get()" @keyup="keydown" @keyup.up="up" @keyup.down="down" placeholder="收罗天下" autofocus x-webkit-speech>
+                            </div>
+                            <div class="col-md-1 col-md-offset-0" style="margin-left: -30px;">
+                                <input class="btn btn-default input-lg" type="button" value="搜索吧" @click="sent"  >
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-md-offset-3">
+                                <p class='textContent' :class="{pink:num==k}" v-for="(v,k) in arr" @mouseenter="mouseenter(k)" @mouseleave="mouseleave(k)" @click="chiose">{{v}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
